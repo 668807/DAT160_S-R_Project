@@ -121,7 +121,7 @@ source install/setup.bash
 
 ## Git commands
 ```bash
-cd ~/ros2_ws/src/DAT160_SnR_Project
+cd ~/ros2_ws/src/multi_robot_challenge_25
 
 # Check what files changed
 git status
