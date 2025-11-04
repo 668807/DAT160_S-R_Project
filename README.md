@@ -138,3 +138,15 @@ git pull
 # Push your changes
 git push
 ```
+
+## Bash kommandoer
+ros2 launch multi_robot_challenge_23 rescue_robots_w1.launch.py
+
+ros2 launch multi_robot_challenge_23 aruco_recognition.launch.py namespace:=tb3_0
+
+ros2 run scoring scoring
+
+ros2 run multi_robot_challenge_23 marker_detection --ros-args -p namespace:=tb3_0
+
+ros2 run multi_robot_challenge_23 wall_follower --ros-args -r __ns:=/tb3_0
+
