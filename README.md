@@ -150,3 +150,6 @@ ros2 run multi_robot_challenge_23 marker_detection --ros-args -p namespace:=tb3_
 
 ros2 run multi_robot_challenge_23 wall_follower --ros-args -r __ns:=/tb3_0
 
+ros2 service call /tb3_0/wall_follower_enable std_srvs/srv/SetBool "{data: true}"
+
+
