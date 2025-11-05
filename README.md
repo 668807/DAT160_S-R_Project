@@ -8,7 +8,7 @@ https://frdedynamics.github.io/hvl_robotics_website/courses/dat160/competition
 **Team Repo:** 
 https://github.com/668807/multi_robot_challenge_25
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Launch Gazebo and map
 ```bash
@@ -54,42 +54,6 @@ ros2 run turtlebot3_teleop teleop_keyboard --ros-args --remap /cmd_vel:=/tb3_0/c
 ros2 run turtlebot3_teleop teleop_keyboard --ros-args --remap /cmd_vel:=/tb3_1/cmd_vel
 ```
 **Controls:** W (forward), S (backward), A (left), D (right), X (stop)
-
----
-
-## 🎯 Key Topics
-
-**IMPORTANT:** Use these topics (map coordinates):
-- `/tb3_X/marker_id` - Marker ID (0-4)
-- `/tb3_X/marker_map_pose` - Position in map frame ✅
-
-**DO NOT USE** (camera coordinates):
-- `/tb3_X/aruco_markers` ❌
-- `/tb3_X/aruco_poses` ❌
-
-**Other useful topics:**
-- `/tb3_X/cmd_vel` - Control robot
-- `/tb3_X/scan` - LiDAR data
-- `/tb3_X/odom` - Odometry
-- `/tb3_X/camera/image_raw` - Camera
-
----
-
-## 🏆 Scoring System
-
-### Point Values
-- Marker 0, 1, 3 (small fires): **100 pt each**
-- Marker 2 (human): **100 pt**
-- Marker 4 (big fire): **100 pt** + **300 pt bonus** (when both robots meet there)
-- **Time penalty:** Start at 600, lose 1 pt/second
-
-### Report a Marker
-```bash
-ros2 service call /set_marker_position scoring_interfaces/srv/SetMarkerPosition \
-  "{marker_id: 4, marker_position: {x: 4.8, y: -0.9, z: 0.25}}"
-```
-
-Get position from `/tb3_X/marker_map_pose` when marker is detected.
 
 ---
 
@@ -140,6 +104,7 @@ git push
 ```
 
 ## Bash kommandoer
+```bash
 ros2 launch multi_robot_challenge_23 rescue_robots_w1.launch.py
 
 ros2 launch multi_robot_challenge_23 aruco_recognition.launch.py namespace:=tb3_0
@@ -151,5 +116,6 @@ ros2 run multi_robot_challenge_23 marker_detection --ros-args -p namespace:=tb3_
 ros2 run multi_robot_challenge_23 wall_follower --ros-args -r __ns:=/tb3_0
 
 ros2 service call /tb3_0/wall_follower_enable std_srvs/srv/SetBool "{data: true}"
+```
 
 
