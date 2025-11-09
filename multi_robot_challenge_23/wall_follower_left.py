@@ -7,22 +7,19 @@ import math
 import time
 from std_srvs.srv import SetBool
 
-
-
+# Brukes til å returnere minste verdi, ignorerer 'inf'
 def safe_min(seq, default=3.5):
     seq = [x for x in seq if math.isfinite(x)]
     return min(seq) if seq else default
 
 class WallFollower(Node):
     def __init__(self):
-        super().__init__('wall_follower_stable')
-        # gjør servicenavn konfigurerbart og relativt til namespace
+        super().__init__('wall_follower_stable_left')
+
         self.declare_parameter('service_name', 'wall_follower_enable')
         svc_name = self.get_parameter('service_name').value
-        # relativt navn (blir /<namespace>/wall_follower_enable når node kjøres i en namespace)
         self.wf_srv = self.create_service(SetBool, svc_name, self._wf_srv_cb)
 
-        # relative topic names so they are namespaced when node is launched in /tb3_0 etc.
         self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.clbk_laser, 10)
 
@@ -30,8 +27,8 @@ class WallFollower(Node):
         self.front_stop = 0.55
         self.lost_wall = 1.8
 
-        self.k_d = 1.4
-        self.k_a = 0.8
+        self.k_d = 1.4    
+        self.k_a = 0.8    
         self.v_max = 0.6
         self.curv_k = 2.0
 
@@ -40,20 +37,23 @@ class WallFollower(Node):
         self.spin_timeout = 2.5 
 
         self.state = 'FOLLOW' 
-        self.find_dir = -1
-        self.get_logger().info("WallFollower (stabil) kjører...")
+        self.find_dir = +1 
+        self.get_logger().info("WallFollower (venstre stabil) kjører...")
 
-        self.enabled = False
+        self.enabled = True
 
     def clbk_laser(self, msg: LaserScan):
-     
+        if not self.enabled:
+            return
+        
         front = safe_min(list(msg.ranges[0:20]) + list(msg.ranges[-20:]), default=3.5)
-        right = safe_min(msg.ranges[260:280], default=3.5)
-        right_front = safe_min(msg.ranges[300:320], default=3.5)
+        left = safe_min(msg.ranges[80:100], default=3.5)
+        left_front = safe_min(msg.ranges[40:60], default=3.5)
 
         if front < self.front_stop:
             self.state = 'AVOID'
-        elif right > self.lost_wall and right_front > self.lost_wall:
+
+        elif left > self.lost_wall and left_front > self.lost_wall: 
             self.state = 'FIND'
         else:
             self.state = 'FOLLOW'
@@ -62,21 +62,27 @@ class WallFollower(Node):
 
         if self.state == 'AVOID':
             twist.linear.x = 0.0
-            twist.angular.z = +0.7
+            twist.angular.z = -0.7
         elif self.state == 'FIND':
             twist.linear.x = 0.05
             twist.angular.z = 0.5 * self.find_dir
-        else:
+        else: 
             theta = math.radians(45.0)
-            alpha = math.atan2(right_front*math.cos(theta) - right,
-                               right_front*math.sin(theta))
-            dist_to_wall = right * math.cos(alpha)
+            
+            alpha = math.atan2(left_front*math.cos(theta) - left,
+                               left_front*math.sin(theta))
+            
+            
+            dist_to_wall = left * math.cos(alpha)
 
-            dist_err = self.d_des - dist_to_wall
-            ang_err = -alpha
+            
+            dist_err = dist_to_wall - self.d_des 
+            
+            ang_err = alpha 
 
             omega = self.k_d * dist_err + self.k_a * ang_err
 
+            
             v = self.v_max / (1.0 + self.curv_k*abs(omega))
             v = max(0.06, min(self.v_max, v))
 
@@ -90,9 +96,9 @@ class WallFollower(Node):
     def _anti_spin_watch(self, twist: Twist):
         current_dir = 0
         if twist.angular.z > 0.15:
-            current_dir = +1
+            current_dir = +1 
         elif twist.angular.z < -0.15:
-            current_dir = -1
+            current_dir = -1 
 
         now = time.time()
         if current_dir == 0:
@@ -110,6 +116,7 @@ class WallFollower(Node):
             return
 
         if now - self.spin_since > self.spin_timeout:
+            # Reverser svingeretning
             twist.linear.x = 0.0
             twist.angular.z = -0.6 * self.spin_dir
             self.state = 'FIND'

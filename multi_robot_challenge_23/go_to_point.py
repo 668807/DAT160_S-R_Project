@@ -26,15 +26,15 @@ class GoToPoint(Node):
         super().__init__('go_to_point')
 
         # --- Pub/Sub ---
-        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
-        self.odom_sub = self.create_subscription(Odometry, '/odom', self.clbk_odom, 10)
+        self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.odom_sub = self.create_subscription(Odometry, 'odom', self.clbk_odom, 10)
 
         self.declare_parameter('use_front_stop', False)
         self.use_front_stop = self.get_parameter('use_front_stop').get_parameter_value().bool_value
         self.front_stop_threshold = 0.35
         self.front_dist = float('inf')
         if self.use_front_stop:
-            self.scan_sub = self.create_subscription(LaserScan, '/scan', self.clbk_scan, 5)
+            self.scan_sub = self.create_subscription(LaserScan, 'scan', self.clbk_scan, 5)
 
         # Parametre
         self.declare_parameter('lin_speed', 0.2)
@@ -64,7 +64,7 @@ class GoToPoint(Node):
         self.enabled = False
         self._prev_enabled = False 
 
-        self.srv = self.create_service(GoToPointSrv, '/go_to_point_switch', self._srv_cb)
+        self.srv = self.create_service(GoToPointSrv, 'go_to_point_switch', self._srv_cb)
         self.get_logger().info('Service /go_to_point_switch (bug2_interfaces/GoToPoint) ready.')
 
         self.timer = self.create_timer(0.05, self.control_loop)

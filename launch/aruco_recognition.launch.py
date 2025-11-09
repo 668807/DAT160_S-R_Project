@@ -3,13 +3,15 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, GroupAction
+from launch.substitutions import TextSubstitution
 
 def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
     namespace_launch_arg = DeclareLaunchArgument(
         'namespace',
         default_value='tb3_5'
+        #default_value ='tb3_0'
     )
 
     aruco_node = Node(

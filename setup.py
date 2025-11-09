@@ -32,6 +32,9 @@ setup(
             'robot_handler = multi_robot_challenge_23.robot_handler:main',
             'leader = multi_robot_challenge_23.leader:main',
             'wall_follower = multi_robot_challenge_23.wall_follower:main',
+            'wall_follower_left = multi_robot_challenge_23.wall_follower_left:main',
+            'go_to_point = multi_robot_challenge_23.go_to_point:main',
+            'bug2_controller = multi_robot_challenge_23.bug2_controller:main',
         ],
     },
 )

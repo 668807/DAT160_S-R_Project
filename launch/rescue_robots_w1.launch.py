@@ -19,12 +19,18 @@ def generate_launch_description():
     # Namespace of each robot
     first_tb3 = 'tb3_0'
     second_tb3 = 'tb3_1'
+   # third_tb3 = 'tb3_2'
+  #  fourth_tb3 = 'tb3_3'
     # Starting position in the gazebo world of each robot
     first_tb3_pos = ['0.0', '-1.0', '0.0']
     second_tb3_pos = ['0.0', '1.0', '0.0']
+   # third_tb3_pos = ['-1.0', '1.0', '0.0']
+   # fourth_tb3_pos = ['1.0', '-1.0', '0.0']
     #Starting orientation in the gazebo world of each robot
     first_tb3_yaw = '0.0'
     second_tb3_yaw = '0.0'
+   # third_tb3_yaw = '0.0'
+   # fourth_tb3_yaw = '0.0'
 
     # Declaring use_sim_time as a launch argument that can then be used in all launch files
     sim_time_arg = DeclareLaunchArgument(
@@ -73,7 +79,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # Spawning the second robot 
+  #   Spawning the second robot 
     tb3_1 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name), 'launch'), '/spawn_robot.launch.py']),
         launch_arguments={
@@ -83,6 +89,27 @@ def generate_launch_description():
             'yaw': second_tb3_yaw,
         }.items()
     )
+
+#    tb3_2 = IncludeLaunchDescription(
+ #       PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name), 'launch'), '/spawn_robot.launch.py']),
+  #      launch_arguments={
+  #          'namespace': third_tb3,
+   #         'x': third_tb3_pos[0],
+   #         'y': third_tb3_pos[1],
+   #         'yaw': third_tb3_yaw,
+   #     }.items()
+   # )
+
+   # tb3_3 = IncludeLaunchDescription(
+   #     PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name), 'launch'), '/spawn_robot.launch.py']),
+    #    launch_arguments={
+    #        'namespace': fourth_tb3,
+     #       'x': fourth_tb3_pos[0],
+      #      'y': fourth_tb3_pos[1],
+      #      'yaw': fourth_tb3_yaw,
+      #  }.items()
+   # )
+
 
     # Starting rviz
     rviz_node = Node(
@@ -101,5 +128,7 @@ def generate_launch_description():
         lifecycle_manager,
         tb3_0,
         tb3_1,
+      #  tb3_2,
+       # tb3_3,
         rviz_node,
     ])
