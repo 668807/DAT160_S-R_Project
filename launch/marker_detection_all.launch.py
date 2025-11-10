@@ -4,7 +4,7 @@ from launch.actions import GroupAction
 from launch.substitutions import TextSubstitution
 
 def generate_launch_description():
-    robot_names = ['tb3_0', 'tb3_2', 'tb3_3']
+    robot_names = ['tb3_0', 'tb3_1']
     def launch_detection_node(robot_name):
         return GroupAction(
             actions=[
