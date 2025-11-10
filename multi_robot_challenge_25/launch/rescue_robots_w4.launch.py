@@ -12,19 +12,27 @@ def generate_launch_description():
     package_name = 'multi_robot_challenge_23'
 
     # Get the path to the world, map and rviz configuration file
-    world_file_path = os.path.join(get_package_share_directory(package_name), 'worlds', 'dat160_w5.world')
-    map_file_path = os.path.join(get_package_share_directory(package_name), 'maps', 'map_dat160_w5.yaml')
+    world_file_path = os.path.join(get_package_share_directory(package_name), 'worlds', 'dat160_w4.world')
+    map_file_path = os.path.join(get_package_share_directory(package_name), 'maps', 'map_dat160_w4.yaml')
     rviz_config_file_path = os.path.join(get_package_share_directory(package_name), 'rviz', 'model.rviz')
 
     # Namespace of each robot
     first_tb3 = 'tb3_0'
     second_tb3 = 'tb3_1'
+    third_tb3 = 'tb3_2'
+    fourth_tb3 = 'tb3_3'
+    
     # Starting position in the gazebo world of each robot
-    first_tb3_pos = ['0.0', '-0.5', '0.0']
-    second_tb3_pos = ['0.0', '-2.5', '0.0']
+    first_tb3_pos = ['0.0', '0.7', '0.0']
+    second_tb3_pos = ['0.0', '-1.3', '0.0']
+    third_tb3_pos = ['-1.5', '0.7', '0.0']
+    fourth_tb3_pos = ['-1.5', '-1.3', '0.0']
+    
     #Starting orientation in the gazebo world of each robot
     first_tb3_yaw = '0.0'
     second_tb3_yaw = '0.0'
+    third_tb3_yaw = '0.0'
+    fourth_tb3_yaw = '0.0'
 
     # Declaring use_sim_time as a launch argument that can then be used in all launch files
     sim_time_arg = DeclareLaunchArgument(
@@ -82,6 +90,28 @@ def generate_launch_description():
             'yaw': second_tb3_yaw,
         }.items()
     )
+    
+    # Spawning the third robot
+    tb3_2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name), 'launch'), '/spawn_robot.launch.py']),
+        launch_arguments={
+            'namespace': third_tb3,
+            'x': third_tb3_pos[0],
+            'y': third_tb3_pos[1],
+            'yaw': third_tb3_yaw,
+        }.items()
+    )
+    
+    # Spawning the fourth robot
+    tb3_3 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name), 'launch'), '/spawn_robot.launch.py']),
+        launch_arguments={
+            'namespace': fourth_tb3,
+            'x': fourth_tb3_pos[0],
+            'y': fourth_tb3_pos[1],
+            'yaw': fourth_tb3_yaw,
+        }.items()
+    )
 
     # Starting rviz
     rviz_node = Node(
@@ -100,5 +130,7 @@ def generate_launch_description():
         lifecycle_manager,
         tb3_0,
         tb3_1,
+        tb3_2,
+        tb3_3,
         rviz_node,
     ])

@@ -26,7 +26,7 @@ def get_robot_description(context):
             "mesh_dir": mesh_dir,
             "namespace": context.launch_configurations['namespace'],
         },
-    ).toxml()
+    ).toxml() # type: ignore
 
     return [SetLaunchConfiguration('robot_desc', robot_description)]
 
