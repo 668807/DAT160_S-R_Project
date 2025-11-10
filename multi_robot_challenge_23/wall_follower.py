@@ -28,10 +28,10 @@ class WallFollower(Node):
 
         self.d_des = 0.50 
         self.front_stop = 0.55
-        self.lost_wall = 1.8
+        self.lost_wall = 1.2
 
-        self.k_d = 1.4
-        self.k_a = 0.8
+        self.k_d = 1.8
+        self.k_a = 1.0
         self.v_max = 0.6
         self.curv_k = 2.0
 
@@ -64,8 +64,8 @@ class WallFollower(Node):
             twist.linear.x = 0.0
             twist.angular.z = +0.7
         elif self.state == 'FIND':
-            twist.linear.x = 0.05
-            twist.angular.z = 0.5 * self.find_dir
+            twist.linear.x = 0.35
+            twist.angular.z = 0.8 * self.find_dir
         else:
             theta = math.radians(45.0)
             alpha = math.atan2(right_front*math.cos(theta) - right,
