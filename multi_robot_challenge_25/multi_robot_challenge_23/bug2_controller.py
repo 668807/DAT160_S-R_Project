@@ -4,6 +4,8 @@
 import math
 from typing import Optional
 
+from geometry_msgs.msg import Twist
+
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
@@ -31,22 +33,25 @@ class Bug2Controller(Node):
         self.declare_parameter('go_to_point_service_name', 'go_to_point_switch')
         self.declare_parameter('obstacle_distance_threshold', 0.5)
         self.declare_parameter('line_hit_tolerance', 0.10)
-        self.declare_parameter('goal_tolerance', 0.20)
+        self.declare_parameter('goal_tolerance', 1.0)
 
         # Anti-flap parametre
         self.declare_parameter('closer_hysteresis', 0.20)      # meter
         self.declare_parameter('switch_cooldown', 0.6)         # sek
         self.declare_parameter('obs_clearance_hyst', 0.10)     # meter hysterese for å frigjøre hinder
-
+        
         self.wall_srv_name = self.get_parameter('wall_follower_service_name').value
         self.gtp_srv_name = self.get_parameter('go_to_point_service_name').value
         self.obs_thr = float(self.get_parameter('obstacle_distance_threshold').value)
         self.line_tol = float(self.get_parameter('line_hit_tolerance').value)
         self.goal_tol = float(self.get_parameter('goal_tolerance').value)
-
+              
         self.closer_hyst = float(self.get_parameter('closer_hysteresis').value)
         self.switch_cooldown = float(self.get_parameter('switch_cooldown').value)
         self.obs_clearance_hyst = float(self.get_parameter('obs_clearance_hyst').value)
+
+        # stopp-publisher
+        self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Tilstandsvariabler
         self.state = 'WAIT_FOR_GOAL'
@@ -123,6 +128,7 @@ class Bug2Controller(Node):
             self.get_logger().info('Goal reached. Stopping all controllers.')
             self.enable_go_to_point(False, self.goal)
             self.enable_wall_follower(False)
+            self.cmd_pub.publish(Twist())  # Stopp roboten
             self.state = 'DONE'
             return
 

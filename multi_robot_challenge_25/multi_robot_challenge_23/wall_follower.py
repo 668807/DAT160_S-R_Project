@@ -22,6 +22,11 @@ class WallFollower(Node):
         # relativt navn (blir /<namespace>/wall_follower_enable når node kjøres i en namespace)
         self.wf_srv = self.create_service(SetBool, svc_name, self._wf_srv_cb)
 
+        self.declare_parameter('start_enabled', True) # explorers = enabled, dummies = disabled i launch
+        self.enabled = self.get_parameter('start_enabled').get_parameter_value().bool_value
+        self.get_logger().info(f"WallFollower (stabil) kjører... enabled={self.enabled}")
+
+        
         # relative topic names so they are namespaced when node is launched in /tb3_0 etc.
         self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.clbk_laser, 10)
@@ -41,11 +46,12 @@ class WallFollower(Node):
 
         self.state = 'FOLLOW' 
         self.find_dir = -1
-        self.get_logger().info("WallFollower (stabil) kjører...")
-
-        self.enabled = False
 
     def clbk_laser(self, msg: LaserScan):
+        
+        if not self.enabled:
+            self.stop_robot()
+            return
      
         front = safe_min(list(msg.ranges[0:20]) + list(msg.ranges[-20:]), default=3.5)
         right = safe_min(msg.ranges[260:280], default=3.5)
@@ -86,6 +92,9 @@ class WallFollower(Node):
         self._anti_spin_watch(twist)
 
         self.cmd_pub.publish(twist)
+        
+    def stop_robot(self):
+        self.cmd_pub.publish(Twist())
 
     def _anti_spin_watch(self, twist: Twist):
         current_dir = 0
@@ -120,6 +129,8 @@ class WallFollower(Node):
     
     def _wf_srv_cb(self, req, resp):
         self.enabled = bool(req.data)
+        if not self.enabled:
+            self.stop_robot()
         resp.success = True
         resp.message = 'wall_follower ' + ('enabled' if self.enabled else 'disabled')
         return resp
