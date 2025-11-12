@@ -23,13 +23,13 @@ def generate_launch_description():
     fourth_tb3 = 'tb3_3'
     
     # Starting position in the gazebo world of each robot
-    first_tb3_pos = ['0.0', '0.7', '0.0']
-    second_tb3_pos = ['0.0', '-1.3', '0.0']
-    third_tb3_pos = ['-1.5', '0.7', '0.0']
-    fourth_tb3_pos = ['-1.5', '-1.3', '0.0']
+    first_tb3_pos = ['-1.0', '2.5', '0.0']
+    second_tb3_pos = ['1.0', '2.5', '0.0']
+    third_tb3_pos = ['-1.5', '2.0', '0.0']
+    fourth_tb3_pos = ['0.5', '-2.0', '0.0']
     
     #Starting orientation in the gazebo world of each robot
-    first_tb3_yaw = '0.0'
+    first_tb3_yaw = '3.14'
     second_tb3_yaw = '0.0'
     third_tb3_yaw = '0.0'
     fourth_tb3_yaw = '0.0'

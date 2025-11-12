@@ -40,7 +40,8 @@ class WallFollower(Node):
         self.find_dir = +1 
         self.get_logger().info("WallFollower (venstre stabil) kjører...")
 
-        self.enabled = True
+        self.declare_parameter('enabled_on_start', True)
+        self.enabled = bool(self.get_parameter('enabled_on_start').value)
 
     def clbk_laser(self, msg: LaserScan):
         if not self.enabled:

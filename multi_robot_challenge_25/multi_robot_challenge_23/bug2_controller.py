@@ -11,6 +11,7 @@ from rclpy.duration import Duration
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Point, Pose
+from geometry_msgs.msg import Twist
 
 from std_srvs.srv import SetBool
 from bug2_interfaces.srv import GoToPoint as GoToPointSrv
@@ -31,7 +32,7 @@ class Bug2Controller(Node):
         self.declare_parameter('go_to_point_service_name', 'go_to_point_switch')
         self.declare_parameter('obstacle_distance_threshold', 0.5)
         self.declare_parameter('line_hit_tolerance', 0.10)
-        self.declare_parameter('goal_tolerance', 0.20)
+        self.declare_parameter('goal_tolerance', 1.20)
 
         # Anti-flap parametre
         self.declare_parameter('closer_hysteresis', 0.20)      # meter
@@ -56,6 +57,7 @@ class Bug2Controller(Node):
         self.left_line_goal_dist: Optional[float] = None
         self.obstacle_in_front: bool = False
         self.last_switch_time = self.get_clock().now()
+        self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
 
         # Subscriptions
         self.sub_fire_goal = self.create_subscription(Pose, 'mission/fire_target_pose',
@@ -123,6 +125,7 @@ class Bug2Controller(Node):
             self.get_logger().info('Goal reached. Stopping all controllers.')
             self.enable_go_to_point(False, self.goal)
             self.enable_wall_follower(False)
+            self.cmd_pub.publish(Twist())
             self.state = 'DONE'
             return
 
@@ -164,6 +167,8 @@ class Bug2Controller(Node):
         if self.goal is None:
             return float('inf')
         return self.dist(p, self.goal)
+    
+
 
     def point_to_line_distance(self, p: Point, a: Point, b: Point) -> float:
         ax, ay, bx, by, px, py = a.x, a.y, b.x, b.y, p.x, p.y

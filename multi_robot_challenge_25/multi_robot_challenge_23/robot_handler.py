@@ -19,7 +19,7 @@ class RobotHandlerClass(Node):
         self.target_robot_ns = str(self.get_parameter('target_robot_ns').value).strip('/')
 
         # Hvilke marker-IDer vil vi trigge på? (tom liste -> alle)
-        self.declare_parameter('trigger_marker_ids', [])
+        self.declare_parameter('trigger_marker_ids', [4])
         self.trigger_marker_ids = set(self.get_parameter('trigger_marker_ids').value or [])
 
         # === Subscribers ===

@@ -43,9 +43,13 @@ class WallFollower(Node):
         self.find_dir = -1
         self.get_logger().info("WallFollower (stabil) kjører...")
 
-        self.enabled = False
+        self.declare_parameter('enabled_on_start', True)
+        self.enabled = bool(self.get_parameter('enabled_on_start').value)
 
     def clbk_laser(self, msg: LaserScan):
+
+        if not self.enabled:
+            return
      
         front = safe_min(list(msg.ranges[0:20]) + list(msg.ranges[-20:]), default=3.5)
         right = safe_min(msg.ranges[260:280], default=3.5)
